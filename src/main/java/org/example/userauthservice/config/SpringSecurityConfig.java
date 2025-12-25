@@ -20,6 +20,8 @@ public class SpringSecurityConfig {
         httpSecurity.cors().disable();
         httpSecurity.csrf().disable();
         httpSecurity.authorizeHttpRequests(authorizeRequests -> authorizeRequests.anyRequest().permitAll());
+//                requestMatchers("/actuator/health").permitAll()
+//                .anyRequest().authenticated());
         return httpSecurity.build();
     }
 
