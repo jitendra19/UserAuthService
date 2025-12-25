@@ -9,6 +9,7 @@ import org.example.userauthservice.models.User;
 import org.example.userauthservice.repos.RoleRepo;
 import org.example.userauthservice.repos.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -25,6 +26,9 @@ public class AuthService implements IAuthService {
     @Autowired
     private RoleRepo roleRepo;
 
+    @Autowired
+    private BCryptPasswordEncoder bCryptPasswordEncoder;
+
     @Override
     public User signup(String email, String password, String name) {
         // if user exists already then return exception
@@ -38,7 +42,7 @@ public class AuthService implements IAuthService {
 
         User user = new User();
         user.setEmail(email);
-        user.setPassword(password);
+        user.setPassword(bCryptPasswordEncoder.encode(password) );
         user.setName(name);
         user.setCreatedAt(new Date());
         user.setUpdatedAt(new Date());
@@ -77,7 +81,8 @@ public class AuthService implements IAuthService {
         }
 
         User user = userOptional.get();
-        if(!user.getPassword().equals(password)){
+//        if(!user.getPassword().equals(password)){
+        if(!bCryptPasswordEncoder.matches(password,user.getPassword())) {
             throw new IncorrectPasswordException("Incorrect password");
         }
 
